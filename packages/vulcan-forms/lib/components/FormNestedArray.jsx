@@ -23,15 +23,7 @@ registerComponent({
 // Wraps the FormNestedItem, repeated for each object
 // Allow for example to have a label per object
 const FormNestedArrayInnerLayout = props => {
-  const {
-    FormComponents,
-    label,
-    children,
-    addItem,
-    beforeComponent,
-    afterComponent,
-    visibleItemIndex,
-  } = props;
+  const { FormComponents, label, children, addItem, beforeComponent, afterComponent } = props;
   return (
     <div>
       {instantiateComponent(beforeComponent, props)}
@@ -125,7 +117,6 @@ class FormNestedArray extends PureComponent {
         {value.map((subDocument, i) => {
           if (this.isDeleted(i)) return null;
           const path = `${this.props.path}.${i}`;
-          console.log(visibleItemIndex[i]);
           return (
             <FormComponents.FormNestedArrayInnerLayout
               {...arrayField}
@@ -133,11 +124,11 @@ class FormNestedArray extends PureComponent {
               FormComponents={FormComponents}
               addItem={this.addItem}
               itemIndex={i}
-              visibleItemIndex={visibleItemIndex[i]}
               path={path}>
               <FormComponents.FormNestedItem
                 {...properties}
                 itemIndex={i}
+                visibleItemIndex={visibleItemIndex[i]}
                 path={path}
                 removeItem={() => {
                   this.removeItem(i);
