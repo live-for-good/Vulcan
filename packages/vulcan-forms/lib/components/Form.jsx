@@ -31,6 +31,10 @@ import {
   Utils,
   isIntlField,
   mergeWithComponents,
+<<<<<<< HEAD
+=======
+  formatLabel,
+>>>>>>> devel
 } from 'meteor/vulcan:core';
 import React, { Component } from 'react';
 import SimpleSchema from 'simpl-schema';
@@ -52,6 +56,7 @@ import uniqBy from 'lodash/uniqBy';
 import isObject from 'lodash/isObject';
 import mapValues from 'lodash/mapValues';
 import pickBy from 'lodash/pickBy';
+import omit from 'lodash/omit';
 
 import { convertSchema, formProperties } from '../modules/schema_utils';
 import { isEmptyValue } from '../modules/utils';
@@ -499,7 +504,8 @@ class SmartForm extends Component {
    */
   getLabel = (fieldName, fieldLocale) => {
     const collectionName = this.props.collectionName.toLowerCase();
-    const label = this.context.intl.formatLabel({
+    const label = formatLabel({
+      intl: this.context.intl,
       fieldName: fieldName,
       collectionName: collectionName,
       schema: this.state.flatSchema,
@@ -1022,6 +1028,7 @@ class SmartForm extends Component {
   getFormGroupProps = group => ({
     key: group.name,
     ...group,
+    group: omit(group, ['fields']),
     errors: this.state.errors,
     throwError: this.throwError,
     currentValues: this.state.currentValues,
