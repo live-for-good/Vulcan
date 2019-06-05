@@ -31,10 +31,7 @@ import {
   Utils,
   isIntlField,
   mergeWithComponents,
-<<<<<<< HEAD
-=======
   formatLabel,
->>>>>>> devel
 } from 'meteor/vulcan:core';
 import React, { Component } from 'react';
 import SimpleSchema from 'simpl-schema';
