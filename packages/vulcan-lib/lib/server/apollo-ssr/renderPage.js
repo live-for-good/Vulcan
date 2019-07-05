@@ -6,7 +6,7 @@
  */
 import React from 'react';
 import ReactDOM from 'react-dom/server';
-import { renderToStringWithData } from 'react-apollo';
+import { getDataFromTree } from 'react-apollo';
 
 import { runCallbacks } from '../../modules/callbacks';
 import { createClient } from './apolloClient';
@@ -40,10 +40,24 @@ const makePageRenderer = ({ computeContext }) => {
       properties: { req, context, apolloClient: client },
     });
 
+    // fill apollo store
+    // NOTE: we CAN'T use renderToStringWithData on the wrapped app (so with Material UI, styled components etc.), 
+    //because react-apollo may trigger style generation while walking the React tree to find query
+    await getDataFromTree(WrappedApp);
+
+    // run callback related to style (need to be done AFTER we get the data with Apollo
+    // otherwise SSR is messed up)
+    const StyledWrappedApp = runCallbacks({
+      name: 'router.server.styleWrapper',
+      iterator: App,
+      properties: { req, context, apolloClient: client },
+    });
+
+
     // equivalent to calling getDataFromTree and then renderToStringWithData
     let htmlContent = '';
     try {
-    htmlContent = await renderToStringWithData(WrappedApp);
+      htmlContent = await ReactDOM.renderToString(StyledWrappedApp);
     } catch (err) {
       // eslint-disable-next-line no-console
       console.error(`Error while server-rendering. date: ${new Date().toString()} url: ${req.url}`); // eslint-disable-line no-console
