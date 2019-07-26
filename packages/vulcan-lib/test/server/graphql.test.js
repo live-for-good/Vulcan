@@ -209,6 +209,27 @@ describe('vulcan:lib/graphql', function () {
       const normalizedSchema = normalizeGraphQLSchema(res.graphQLSchema);
       expect(normalizedSchema).toMatch('type Foo { field: String }');
     });
+    test('generate a type for a field with resolveAs', () => {
+      const collection = makeDummyCollection({
+        field: {
+          type: String,
+          canRead: ['admins'],
+          resolveAs: {
+            fieldName: 'field',
+            type: 'Bar',
+            resolver: async (user, args, { Users }) => {
+              return 'bar';
+            },
+          },
+        }
+      });
+      const res = collectionToGraphQL(collection);
+      expect(res.graphQLSchema).toBeDefined();
+      // debug
+      //console.log(res.graphQLSchema);
+      const normalizedSchema = normalizeGraphQLSchema(res.graphQLSchema);
+      expect(normalizedSchema).toMatch('type Foo { field: Bar }');
+    });
     test('generate type for a nested field', () => {
       const collection = makeDummyCollection({
         nestedField: {
@@ -356,6 +377,77 @@ describe('vulcan:lib/graphql', function () {
         expect(normalizedSchema).toMatch('type FooEntrepreneurLifeCycleHistory { entrepreneurLifeCycleState: FooEntrepreneurLifeCycleHistoryEntrepreneurLifeCycleStateEnum');
         expect(normalizedSchema).toMatch('enum FooEntrepreneurLifeCycleHistoryEntrepreneurLifeCycleStateEnum { booster explorer starter tester }');
       });
+    });
+
+    describe('mutation inputs', () => {
+      test('generate creation input', () => {
+        const collection = makeDummyCollection({
+          field: {
+            type: String,
+            canRead: ['admins'],
+            canCreate: ['admins'],
+          }
+        });
+        const res = collectionToGraphQL(collection);
+        // debug
+        //console.log(res.graphQLSchema);
+        const normalizedSchema = normalizeGraphQLSchema(res.graphQLSchema);
+        expect(normalizedSchema).toMatch('input CreateFooInput { data: CreateFooDataInput! }');
+        expect(normalizedSchema).toMatch('input CreateFooDataInput { field: String }');
+      });
+      test('generate inputs for nested objects', () => {
+        const collection = makeDummyCollection({
+          nestedField: {
+            type: new SimpleSchema({
+              someField: {
+                type: String,
+                canRead: ['admins'],
+                canCreate: ['admins'],
+              }
+            }),
+            canRead: ['admins'],
+            canCreate: ['admins'],
+          }
+        });
+        const res = collectionToGraphQL(collection);
+        // debug
+        //console.log(res.graphQLSchema);
+        const normalizedSchema = normalizeGraphQLSchema(res.graphQLSchema);
+        // TODO: not 100% of the expected result
+        expect(normalizedSchema).toMatch('input FooNestedFieldInput { someField: String }');
+        expect(normalizedSchema).toMatch('input CreateFooInput { data: CreateFooDataInput! }');
+        expect(normalizedSchema).toMatch('input CreateFooDataInput { nestedField: FooNestedFieldInput }');
+      });
+      test('generate inputs for array of nested objects', () => {
+        const collection = makeDummyCollection({
+          arrayField: {
+            type: Array,
+            canRead: ['admins'],
+            canCreate: ['admins'],
+          },
+          'arrayField.$': {
+            canRead: ['admins'],
+            canCreate: ['admins'],
+            type: new SimpleSchema({
+              someField: {
+                type: String,
+                canRead: ['admins'],
+                canCreate: ['admins'],
+              }
+            })
+          }
+        });
+        const res = collectionToGraphQL(collection);
+        // debug
+        //console.log(res.graphQLSchema);
+        const normalizedSchema = normalizeGraphQLSchema(res.graphQLSchema);
+        // TODO: not 100% sure of the syntax
+        expect(normalizedSchema).toMatch('input FooArrayFieldInput { someField: String }');
+        expect(normalizedSchema).toMatch('input CreateFooInput { data: CreateFooDataInput! }');
+        expect(normalizedSchema).toMatch('input CreateFooDataInput { arrayField: [FooArrayFieldInput] }');
+      });
+
+
     });
   });
 

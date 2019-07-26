@@ -27,8 +27,10 @@ export const getArguments = args => {
 // `${description ?  `${indentation}# ${description}\n` : ''}${indentation}${name}${getArguments(args)}: ${type}${required ? '!' : ''} ${directive ? directive : ''}`;
 
 // version that does not make any fields required
-export const fieldTemplate = ({ name, type, args, directive, description, required }, indentation = '') =>
-  `${description ? `${indentation}# ${description}\n` : ''}${indentation}${name}${getArguments(args)}: ${type} ${directive ? directive : ''}`;
+export const fieldTemplate = ({ name, type, args, directive, description, required }, indentation = '') => {
+  return `${description ? `${indentation}# ${description}\n` : ''}${indentation}${name}${getArguments(args)}: ${type} ${directive ? directive : ''}`;
+
+};
 
 /* ------------------------------------- Main Type ------------------------------------- */
 
@@ -211,7 +213,7 @@ type SingleMovieOuput{
 
 */
 export const singleOutputTemplate = ({ typeName }) =>
-  `type Single${typeName}Output{
+  `type Single${typeName}Output {
   result: ${typeName}
 }`;
 
@@ -226,7 +228,7 @@ type MultiMovieOuput{
 
 */
 export const multiOutputTemplate = ({ typeName }) =>
-  `type Multi${typeName}Output{
+  `type Multi${typeName}Output {
   results: [${typeName}]
   totalCount: Int
 }`;
@@ -337,6 +339,10 @@ export const deleteMutationTemplate = ({ typeName }) =>
 
 // note: not currently used
 
+export const nestedInputTemplate = ({ typeName, fields }) =>
+  `input ${typeName}Input {
+  ${convertToGraphQL(fields, '  ')}
+}`;
 /*
 
 Type for create mutation input argument
@@ -347,7 +353,7 @@ type CreateMovieInput {
 
 */
 export const createInputTemplate = ({ typeName }) =>
-  `input Create${typeName}Input{
+  `input Create${typeName}Input {
   data: Create${typeName}DataInput!
 }`;
 
@@ -362,7 +368,7 @@ type UpdateMovieInput {
 
 */
 export const updateInputTemplate = ({ typeName }) =>
-  `input Update${typeName}Input{
+  `input Update${typeName}Input {
   selector: ${typeName}SelectorUniqueInput!
   data: Update${typeName}DataInput!
 }`;
@@ -380,7 +386,7 @@ type UpsertMovieInput {
 
 */
 export const upsertInputTemplate = ({ typeName }) =>
-  `input Upsert${typeName}Input{
+  `input Upsert${typeName}Input {
   selector: ${typeName}SelectorUniqueInput!
   data: Update${typeName}DataInput!
 }`;
@@ -395,7 +401,7 @@ type DeleteMovieInput {
 
 */
 export const deleteInputTemplate = ({ typeName }) =>
-  `input Delete${typeName}Input{
+  `input Delete${typeName}Input {
   selector: ${typeName}SelectorUniqueInput!
 }`;
 
@@ -441,7 +447,7 @@ type MovieOutput {
 
 */
 export const mutationOutputTemplate = ({ typeName }) =>
-  `type ${typeName}Output{
+  `type ${typeName}Output {
   data: ${typeName}
 }`;
 

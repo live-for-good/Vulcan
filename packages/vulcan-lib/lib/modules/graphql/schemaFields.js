@@ -26,7 +26,7 @@ const isValidName = (name) => {
 const isValidEnum = (values) => !values.find((val => !isValidName(val)));
 
 // get GraphQL type for a nested object (<MainTypeName><FieldName> e.g PostAuthor, EventAdress, etc.)
-export const getNestedGraphQLType = (typeName, fieldName) => `${typeName}${capitalize(unarrayfyFieldName(fieldName))}`;
+export const getNestedGraphQLType = (typeName, fieldName, isInput) => `${typeName}${capitalize(unarrayfyFieldName(fieldName))}${isInput ? 'Input' : ''}`;
 
 export const getEnumType = (typeName, fieldName) => `${typeName}${capitalize(unarrayfyFieldName(fieldName))}Enum`;
 
@@ -73,7 +73,8 @@ export const getGraphQLType = ({
         const arrayItemType = getGraphQLType({
           schema,
           fieldName: arrayItemFieldName,
-          typeName
+          typeName,
+          isInput
         });
         return arrayItemType ? `[${arrayItemType}]` : null;
       }
@@ -82,7 +83,7 @@ export const getGraphQLType = ({
     case 'Object':
       // 2 cases: it's an actual JSON or a nested schema
       if (!field.blackbox && fieldType._schema) {
-        return getNestedGraphQLType(typeName, fieldName);
+        return getNestedGraphQLType(typeName, fieldName, isInput);
       }
       // blackbox JSON object
       return 'JSON';
@@ -172,7 +173,7 @@ export const getResolveAsFields = ({
       directive: fieldDirective,
     });
   }
-  return fields;
+  return { fields, resolvers };
 };
 
 // handle querying/updating permissions
@@ -252,9 +253,9 @@ export const getSchemaFields = (schema, typeName) => {
     selector: [],
     selectorUnique: [],
     orderBy: [],
+    enums: []
   };
   const nestedFieldsList = [];
-  const enumFieldsList = [];
   const resolvers = [];
 
   Object.keys(schema).forEach(fieldName => {
@@ -274,11 +275,11 @@ export const getSchemaFields = (schema, typeName) => {
 
       // if field has a resolveAs, push it to schema
       if (field.resolveAs) {
-        const resolveAsFields = getResolveAsFields({
+        const { fields: resolveAsFields, resolvers: resolveAsResolvers } = getResolveAsFields({
           typeName, field, fieldName, fieldType, fieldDescription, fieldDirective, fieldArguments
         });
-        resolvers.concat(resolveAsFields.resolvers);
-        fields.mainType.concat(resolveAsFields.mainType);
+        resolvers.push(...resolveAsResolvers);
+        fields.mainType.push(...resolveAsFields.mainType);
       } else {
         // try to guess GraphQL type
         if (fieldType) {
@@ -302,7 +303,7 @@ export const getSchemaFields = (schema, typeName) => {
 
         // ignore arrays containing invalid values
         if (isValidEnum(allowedValues)) {
-          enumFieldsList.push({//
+          fields.enums.push({//
             allowedValues,
             typeName: getEnumType(typeName, fieldName)
           });
@@ -312,20 +313,22 @@ export const getSchemaFields = (schema, typeName) => {
       }
 
       const permissionsFields = getPermissionFields({ field, fieldName, inputFieldType });
-      fields.create.concat(permissionsFields.create);
-      fields.update.concat(permissionsFields.update);
-      fields.selector.concat(permissionsFields.selector);
-      fields.selectorUnique.concat(permissionsFields.selectorUnique);
-      fields.orderBy.concat(permissionsFields.orderBy);
+      fields.create.push(...permissionsFields.create);
+      fields.update.push(...permissionsFields.update);
+      fields.selector.push(...permissionsFields.selector);
+      fields.selectorUnique.push(...permissionsFields.selectorUnique);
+      fields.orderBy.push(...permissionsFields.orderBy);
 
       // check for nested fields
       if (isNestedObjectField(field)) {
         //console.log('detected a nested field', fieldName);
         const nestedSchema = getNestedSchema(field);
         const nestedTypeName = getNestedGraphQLType(typeName, fieldName);
+        //const nestedInputTypeName = `${nestedTypeName}Input`;
         const nestedFields = getSchemaFields(nestedSchema, nestedTypeName);
         // add the generated typeName to the info
         nestedFields.typeName = nestedTypeName;
+        //nestedFields.inputTypeName = nestedInputTypeName;
         nestedFieldsList.push(nestedFields);
       }
       // check if field is an array of objects
@@ -344,7 +347,6 @@ export const getSchemaFields = (schema, typeName) => {
   return {
     fields,
     nestedFieldsList,
-    enumFieldsList,
     resolvers
   };
 };
