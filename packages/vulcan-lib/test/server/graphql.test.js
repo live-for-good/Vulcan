@@ -209,27 +209,6 @@ describe('vulcan:lib/graphql', function () {
       const normalizedSchema = normalizeGraphQLSchema(res.graphQLSchema);
       expect(normalizedSchema).toMatch('type Foo { field: String }');
     });
-    test('generate a type for a field with resolveAs', () => {
-      const collection = makeDummyCollection({
-        field: {
-          type: String,
-          canRead: ['admins'],
-          resolveAs: {
-            fieldName: 'field',
-            type: 'Bar',
-            resolver: async (user, args, { Users }) => {
-              return 'bar';
-            },
-          },
-        }
-      });
-      const res = collectionToGraphQL(collection);
-      expect(res.graphQLSchema).toBeDefined();
-      // debug
-      //console.log(res.graphQLSchema);
-      const normalizedSchema = normalizeGraphQLSchema(res.graphQLSchema);
-      expect(normalizedSchema).toMatch('type Foo { field: Bar }');
-    });
     test('generate type for a nested field', () => {
       const collection = makeDummyCollection({
         nestedField: {
@@ -268,6 +247,53 @@ describe('vulcan:lib/graphql', function () {
       const normalizedSchema = normalizeGraphQLSchema(res.graphQLSchema);
       expect(normalizedSchema).toMatch('type Foo { arrayField: [FooArrayField] }');
       expect(normalizedSchema).toMatch('type FooArrayField { subField: String }');
+    });
+
+
+    describe('resolveAs', () => {
+      test('generate a type for a field with resolveAs', () => {
+        const collection = makeDummyCollection({
+          field: {
+            type: String,
+            canRead: ['admins'],
+            resolveAs: {
+              fieldName: 'field',
+              type: 'Bar',
+              resolver: async (user, args, { Users }) => {
+                return 'bar';
+              },
+            },
+          }
+        });
+        const res = collectionToGraphQL(collection);
+        expect(res.graphQLSchema).toBeDefined();
+        // debug
+        //console.log(res.graphQLSchema);
+        const normalizedSchema = normalizeGraphQLSchema(res.graphQLSchema);
+        expect(normalizedSchema).toMatch('type Foo { field: Bar }');
+      });
+      test('generate a type for a field with addOriginalField=true', () => {
+
+        const collection = makeDummyCollection({
+          field: {
+            type: String,
+            optional: true,
+            canRead: ['admins'],
+            resolveAs: {
+              fieldName: 'resolvedField',
+              type: 'Bar',
+              resolver: (collection, args, context) => {
+                return 'bar';
+              },
+              addOriginalField: true,
+            }
+          }
+        });
+        const res = collectionToGraphQL(collection);
+        expect(res.graphQLSchema).toBeDefined();
+        const normalizedSchema = normalizeGraphQLSchema(res.graphQLSchema);
+        expect(normalizedSchema).toMatch('type Foo { resolvedField: Bar field: String }');
+      });
     });
 
     describe('enums', () => {
@@ -414,9 +440,9 @@ describe('vulcan:lib/graphql', function () {
         //console.log(res.graphQLSchema);
         const normalizedSchema = normalizeGraphQLSchema(res.graphQLSchema);
         // TODO: not 100% of the expected result
-        expect(normalizedSchema).toMatch('input FooNestedFieldInput { someField: String }');
         expect(normalizedSchema).toMatch('input CreateFooInput { data: CreateFooDataInput! }');
-        expect(normalizedSchema).toMatch('input CreateFooDataInput { nestedField: FooNestedFieldInput }');
+        expect(normalizedSchema).toMatch('input CreateFooDataInput { nestedField: CreateFooNestedFieldDataInput }');
+        expect(normalizedSchema).toMatch('input CreateFooNestedFieldDataInput { someField: String }');
       });
       test('generate inputs for array of nested objects', () => {
         const collection = makeDummyCollection({
@@ -442,12 +468,67 @@ describe('vulcan:lib/graphql', function () {
         //console.log(res.graphQLSchema);
         const normalizedSchema = normalizeGraphQLSchema(res.graphQLSchema);
         // TODO: not 100% sure of the syntax
-        expect(normalizedSchema).toMatch('input FooArrayFieldInput { someField: String }');
         expect(normalizedSchema).toMatch('input CreateFooInput { data: CreateFooDataInput! }');
-        expect(normalizedSchema).toMatch('input CreateFooDataInput { arrayField: [FooArrayFieldInput] }');
+        expect(normalizedSchema).toMatch('input CreateFooDataInput { arrayField: [CreateFooArrayFieldDataInput] }');
+        expect(normalizedSchema).toMatch('input CreateFooArrayFieldDataInput { someField: String }');
       });
 
-
+      test('ignore resolveAs', () => {
+        const collection = makeDummyCollection({
+          nestedField: {
+            canRead: ['admins'],
+            canCreate: ['admins'],
+            type: new SimpleSchema({
+              someField: {
+                type: String,
+                optional: true,
+                canRead: ['admins'],
+                resolveAs: {
+                  fieldName: 'resolvedField',
+                  type: 'Bar',
+                  resolver: (collection, args, context) => {
+                    return 'bar';
+                  },
+                }
+              }
+            })
+          }
+        });
+        const res = collectionToGraphQL(collection);
+        expect(res.graphQLSchema).toBeDefined();
+        const normalizedSchema = normalizeGraphQLSchema(res.graphQLSchema);
+        expect(normalizedSchema).not.toMatch('input CreateFooNestedFieldDataInput');
+      });
+      test('generate input with resolveAs and addOriginalField', () => {
+        const collection = makeDummyCollection({
+          nestedField: {
+            canRead: ['admins'],
+            canCreate: ['admins'],
+            type: new SimpleSchema({
+              someField: {
+                type: String,
+                optional: true,
+                canRead: ['admins'],
+                canCreate: ['admins'],
+                resolveAs: {
+                  fieldName: 'resolvedField',
+                  type: 'Bar',
+                  resolver: (collection, args, context) => {
+                    return 'bar';
+                  },
+                  addOriginalField: true,
+                }
+              }
+            })
+          }
+        });
+        const res = collectionToGraphQL(collection);
+        expect(res.graphQLSchema).toBeDefined();
+        const normalizedSchema = normalizeGraphQLSchema(res.graphQLSchema);
+        expect(normalizedSchema).toMatch('input CreateFooInput { data: CreateFooDataInput! }');
+        expect(normalizedSchema).toMatch('input CreateFooDataInput { nestedField: CreateFooNestedFieldDataInput }');
+        expect(normalizedSchema).toMatch('input CreateFooNestedFieldDataInput { someField: String }');
+      });
     });
   });
 
