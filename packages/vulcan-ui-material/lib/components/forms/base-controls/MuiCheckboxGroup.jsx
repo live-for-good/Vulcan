@@ -136,7 +136,6 @@ const MuiCheckboxGroup = createReactClass({
   },
   
   render: function () {
-    
     if (this.props.layout === 'elementOnly') {
       return (
         <div>{this.renderElement()}</div>
