@@ -53,12 +53,22 @@ DatatableContentsStories.add('DatatableContents - interactive with all props ', 
       order: 2,
     },
   ];
+  const optionsFooter = ['footer1', 'footer2'];
+  const footerData = array('footer', optionsFooter);
+  const showEdit = boolean('Able/Disable showEdit', false);
+  const loading = boolean('Able/Disable Loading', false);
+  const error = object('Error Message', { message: 'foo' });
+
   return (
     <Components.DatatableContents
       {...defaultProps.DatatableContents}
       title={title}
       results={object('results', results)}
       columns={object('columns', columns)}
+      footerData={footerData}
+      showEdit={showEdit}
+      loading={loading}
+      error={error}
     />
   );
 })
@@ -101,19 +111,10 @@ DatatableContentsStories.add('DatatableContents - interactive with all props ', 
       </div>
     );
   })
-  // TO FINISH => TRYING TO MAKE APPEAR THE DATATABLE LOADMORE BUTTON
-  .add(' DatatableContents - DatatableLoadMoreButton ', () => {
-    return (
-      <div>
-        <Components.DatatableContents {...defaultProps.DatatableContents} />
-        <p>{defaultProps.DatatableContents.results.length}</p>
-      </div>
-    );
-  })
 
   .add(' DatatableContents - Footer ', () => {
-    const optionsfooter = ['footer1', 'footer2'];
-    const footerData = array('footer', optionsfooter);
+    const optionsFooter = ['footer1', 'footer2'];
+    const footerData = array('footer', optionsFooter);
     return (
       <div>
         <Components.DatatableContents {...defaultProps.DatatableContents} footerData={footerData} />
