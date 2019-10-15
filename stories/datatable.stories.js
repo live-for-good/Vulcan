@@ -82,9 +82,10 @@ DatatableContentsStories.add('DatatableContents - interactive with all props ', 
   );
 })
   .add('DatatableContents - loading', () => <Components.DatatableContents loading={true} />)
-  .add('DatatableContents - error', () => (
-    <Components.DatatableContents {...defaultProps.DatatableContents} error={{ message: 'foo' }} />
-  ))
+  .add('DatatableContents - error', () => {
+    const error = object('Error Message', { message: 'foo' });
+    return <Components.DatatableContents {...defaultProps.DatatableContents} error={error} />;
+  })
 
   // NOT WORKING => supposed to be checking dans DatatableContents
   // if no columns are provided, default to using keys of first array item
@@ -97,13 +98,15 @@ DatatableContentsStories.add('DatatableContents - interactive with all props ', 
   ))
 
   //NOT PERFECT => The Edit part in the DatatableContentsHeadLayout doesn't appear
-  .add('DatatableContents - showEdit', () => (
-    <Components.DatatableContents {...defaultProps.DatatableContents} showEdit={true} />
-  ))
+  .add('DatatableContents - showEdit', () => {
+    const showEdit = boolean('Able/Disable showEdit', true);
+    return <Components.DatatableContents {...defaultProps.DatatableContents} showEdit={showEdit} />;
+  })
   // DOES NOT WORK
-  .add('DatatableContents - showNew', () => (
-    <Components.DatatableContents {...defaultProps.DatatableContents} showNew={true} />
-  ))
+  .add('DatatableContents - showNew', () => {
+    const showNew = boolean('Able/Disable showNew', true);
+    return <Components.DatatableContents {...defaultProps.DatatableContents} showNew={showNew} />;
+  })
   // DOES NOT WORK
   .add('DatatableContents - Display DatableEmpty', () => {
     return <Components.DatatableContents {...defaultProps.DatatableContents} results={[]} />;
@@ -113,7 +116,7 @@ DatatableContentsStories.add('DatatableContents - interactive with all props ', 
 
   .add(' DatatableContents - DatatableLoadMoreButton ', () => {
     const paginate = boolean('Able/Disable Paginate', false);
-    const loadMore = boolean('Able/Disable loadMore', false);
+    const loadMore = boolean('Able/Disable loadMore', true);
     const count = number('count', 1);
     return (
       <div>
