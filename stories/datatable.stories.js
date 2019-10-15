@@ -120,7 +120,23 @@ DatatableContentsStories.add('DatatableContents - interactive with all props ', 
         <Components.DatatableContents {...defaultProps.DatatableContents} footerData={footerData} />
       </div>
     );
+  })
+  .add(' DatatableContents - Paginate ', () => {
+    const paginate = boolean('Able/Disable Paginate', true);
+    const paginationTerms = object('paginationTerms', { itemsPerPage: 10, limit: 2, offset: 1 });
+    return (
+      <div>
+        <Components.DatatableContents
+          paginate={paginate}
+          paginationTerms={paginationTerms}
+          totalCount={defaultProps.DatatableContents.results.length}
+          {...defaultProps.DatatableContents}
+        />
+      </div>
+    );
   });
+
+// ===============================================================================================
 
 const DatatableAboveStories = storiesOf('Core/Datatable/DatatableAbove', module);
 DatatableAboveStories.addDecorator(withKnobs);
