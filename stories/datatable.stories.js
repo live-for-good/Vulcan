@@ -54,10 +54,14 @@ DatatableContentsStories.add('DatatableContents - interactive with all props ', 
     },
   ];
   const optionsFooter = ['footer1', 'footer2'];
-  const footerData = array('footer', optionsFooter);
   const showEdit = boolean('Able/Disable showEdit', false);
   const loading = boolean('Able/Disable Loading', false);
+  const paginate = boolean('Able/Disable Paginate', false);
+  const loadMore = boolean('Able/Disable loadMore', false);
+  const count = number('count', 1);
+  const paginationTerms = object('paginationTerms', { itemsPerPage: 10, limit: 2, offset: 1 });
   const error = object('Error Message', { message: 'foo' });
+  const footerData = array('footer', optionsFooter);
 
   return (
     <Components.DatatableContents
@@ -69,6 +73,11 @@ DatatableContentsStories.add('DatatableContents - interactive with all props ', 
       showEdit={showEdit}
       loading={loading}
       error={error}
+      paginate={paginate}
+      loadMore={loadMore}
+      count={count}
+      paginationTerms={paginationTerms}
+      totalCount={defaultProps.DatatableContents.results.length}
     />
   );
 })
@@ -102,7 +111,6 @@ DatatableContentsStories.add('DatatableContents - interactive with all props ', 
 
   .add('DatableEmpty ', () => <Components.DatatableEmpty />)
 
-  // TO FINISH => TRYING TO MAKE APPEAR THE DATATABLE LOADMORE BUTTON
   .add(' DatatableContents - DatatableLoadMoreButton ', () => {
     const paginate = boolean('Able/Disable Paginate', false);
     const loadMore = boolean('Able/Disable loadMore', false);
