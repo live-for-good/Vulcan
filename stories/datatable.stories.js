@@ -91,7 +91,7 @@ DatatableContentsStories.add('DatatableContents - interactive with all props ', 
   .add('DatatableContents - showEdit', () => (
     <Components.DatatableContents {...defaultProps.DatatableContents} showEdit={true} />
   ))
-  // DOES NOT WORK => PR to do on the ShowNew Props
+  // DOES NOT WORK
   .add('DatatableContents - showNew', () => (
     <Components.DatatableContents {...defaultProps.DatatableContents} showNew={true} />
   ))
@@ -104,10 +104,18 @@ DatatableContentsStories.add('DatatableContents - interactive with all props ', 
 
   // TO FINISH => TRYING TO MAKE APPEAR THE DATATABLE LOADMORE BUTTON
   .add(' DatatableContents - DatatableLoadMoreButton ', () => {
+    const paginate = boolean('Able/Disable Paginate', false);
+    const loadMore = boolean('Able/Disable loadMore', false);
+    const count = number('count', 1);
     return (
       <div>
-        <Components.DatatableContents {...defaultProps.DatatableContents} />
-        <p>{defaultProps.DatatableContents.results.length}</p>
+        <Components.DatatableContents
+          paginate={paginate}
+          loadMore={loadMore}
+          count={count}
+          totalCount={defaultProps.DatatableContents.results.length}
+          {...defaultProps.DatatableContents}
+        />
       </div>
     );
   })
