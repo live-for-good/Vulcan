@@ -10,16 +10,6 @@ This component expects:
 - currentUser
 - client (Apollo client)
 
-### New Form:
-
-- newMutation
-
-### Edit Form:
-
-- editMutation
-- removeMutation
-- document
-
 */
 
 import {
@@ -112,7 +102,7 @@ const getInitialStateFromProps = nextProps => {
   Utils.removeProperty(initialDocument, '__typename');
 
   return {
-    disabled: false,
+    disabled: nextProps.disabled,
     errors: [],
     deletedValues: [],
     currentValues: {},
@@ -279,7 +269,10 @@ class SmartForm extends Component {
 
     // for each group, add relevant fields
     groups = groups.map(group => {
-      group.label = group.label || this.context.intl.formatMessage({ id: group.name });
+      group.label =
+        group.label ||
+        this.context.intl.formatMessage({ id: group.name }) ||
+        Utils.capitalize(group.name);
       group.fields = _.filter(fields, field => {
         return field.group && field.group.name === group.name;
       });
@@ -287,14 +280,16 @@ class SmartForm extends Component {
     });
 
     // add default group if necessary
-    const defaultGroupFields = _filter(fields, field => !field.group)
-    if (defaultGroupFields.length){
-      groups = [{
-        name: 'default',
-        label: 'default',
-        order: 0,
-        fields: defaultGroupFields
-      }].concat(groups);
+    const defaultGroupFields = _filter(fields, field => !field.group);
+    if (defaultGroupFields.length) {
+      groups = [
+        {
+          name: 'default',
+          label: 'default',
+          order: 0,
+          fields: defaultGroupFields,
+        },
+      ].concat(groups);
     }
 
     // sort by order
@@ -391,8 +386,9 @@ class SmartForm extends Component {
     // }
 
     // if options are a function, call it
+    const document = this.getDocument();
     if (typeof field.options === 'function') {
-      field.options = field.options.call(fieldSchema, this.props);
+      field.options = field.options.call(fieldSchema, { ...this.props, document });
     }
 
     // if this an intl'd field, use a special intlInput
@@ -406,7 +402,9 @@ class SmartForm extends Component {
     for (const prop in inputProperties) {
       const property = inputProperties[prop];
       field[prop] =
-        typeof property === 'function' ? property.call(fieldSchema, this.props) : property;
+        typeof property === 'function'
+          ? property.call(fieldSchema, { ...this.props, document })
+          : property;
     }
 
     // add description as help prop
@@ -440,15 +438,11 @@ class SmartForm extends Component {
     return field;
   };
   handleFieldChildren = (field, fieldName, fieldSchema, schema) => {
-    // array field 
+    // array field
     if (fieldSchema.arrayFieldSchema) {
       field.arrayFieldSchema = fieldSchema.arrayFieldSchema;
       // create a field that can be exploited by the form
-      field.arrayField = this.createArraySubField(
-        fieldName,
-        field.arrayFieldSchema,
-        schema
-      );
+      field.arrayField = this.createArraySubField(fieldName, field.arrayFieldSchema, schema);
       //field.nestedInput = true
     }
     // nested fields: set input to "nested"
@@ -781,7 +775,6 @@ class SmartForm extends Component {
    * the message returned is actually ignored by most browsers and a default message 'Are you sure you want to leave this page? You might have unsaved changes' is displayed. See the Notes section on the mozilla docs above
    */
   handlePageLeave = event => {
-    const set = this.getData();
     if (this.isChanged()) {
       this.props.editMutation({ documentId: this.props.documentId, set: set });
       const message = this.context.intl.formatMessage({
@@ -989,8 +982,7 @@ class SmartForm extends Component {
     );
 
     if (window.confirm(deleteDocumentConfirm)) {
-      this.props
-        .removeMutation({ documentId })
+      this.props[`delete${this.props.typeName}`]({ documentId })
         .then(mutationResult => {
           // the mutation result looks like {data:{collectionRemove: null}} if succeeded
           if (this.props.removeSuccessCallback)
@@ -1028,6 +1020,7 @@ class SmartForm extends Component {
     group: omit(group, ['fields']),
     errors: this.state.errors,
     throwError: this.throwError,
+    document: this.getDocument(),
     currentValues: this.state.currentValues,
     updateCurrentValues: this.updateCurrentValues,
     deletedValues: this.state.deletedValues,
@@ -1036,6 +1029,7 @@ class SmartForm extends Component {
     formType: this.getFormType(),
     currentUser: this.props.currentUser,
     disabled: this.state.disabled,
+    prefilledProps: this.props.prefilledProps,
     formComponents: mergeWithComponents(this.props.formComponents),
   });
 
@@ -1087,9 +1081,10 @@ SmartForm.propTypes = {
   schema: PropTypes.object, // usually not needed
 
   // graphQL
-  newMutation: PropTypes.func, // the new mutation
-  editMutation: PropTypes.func, // the edit mutation
-  removeMutation: PropTypes.func, // the remove mutation
+  // => now mutations have dynamic names
+  //newMutation: PropTypes.func, // the new mutation
+  //editMutation: PropTypes.func, // the edit mutation
+  //removeMutation: PropTypes.func, // the remove mutation
 
   // form
   prefilledProps: PropTypes.object,
@@ -1105,6 +1100,7 @@ SmartForm.propTypes = {
   repeatErrors: PropTypes.bool,
   warnUnsavedChanges: PropTypes.bool,
   formComponents: PropTypes.object,
+  disabled: PropTypes.bool,
 
   // callbacks
   ...callbackProps,

@@ -111,13 +111,13 @@ const Button = ({ children, variant, size, iconButton, classes, theme, ...rest }
 
   switch (size) {
     case 'sm':
-      size = 'sm';
+      size = 'small';
       break;
     case 'md':
-      size = 'md';
+      size = 'medium';
       break;
     case 'lg':
-      size = 'lg';
+      size = 'large';
       break;
     default:
       size = undefined;
@@ -144,7 +144,7 @@ Button.displayName = 'Button';
 
 
 Button.propTypes = {
-  variant: PropTypes.oneOf(['primary', 'secondary', 'success', 'warning', 'danger', 'info', 'light', 'dark', 'link',
+  variant: PropTypes.oneOf(['default', 'primary', 'secondary', 'success', 'warning', 'danger', 'info', 'light', 'dark', 'link',
     'outline-primary', 'outline-secondary', 'outline-success', 'outline-warning', 'outline-danger', 'outline-info',
     'outline-light', 'outline-dark', 'inherit']),
   size: PropTypes.oneOf(['sm', 'md', 'lg']),

@@ -1,1 +1,2 @@
-export { default as initComponentTest } from './initComponentTest';
+export { default as MockedProvider } from './MockedProvider';
+export { default as createDummyCollection } from './createDummyCollection';
