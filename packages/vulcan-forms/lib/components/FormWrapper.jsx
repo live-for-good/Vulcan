@@ -58,22 +58,24 @@ class FormWrapper extends PureComponent {
   constructor(props) {
     super(props);
   }
-  componentWillMount(){
+  UNSAFE_componentWillMount() {
     // instantiate the wrapped component outside of render
     // see https://reactjs.org/docs/higher-order-components.html#dont-use-hocs-inside-the-render-method
     this.FormComponent = this.getComponent(this.props);
   }
-  UNSAFE_componentWillReceiveProps(nextProps){
+  UNSAFE_componentWillReceiveProps(nextProps) {
     // reset if a documentId has been added or removed
-    const shouldReset = nextProps.documentId && !this.props.documentId || !nextProps.documentId && this.props.documentId
+    const shouldReset =
+      (nextProps.documentId && !this.props.documentId) ||
+      (!nextProps.documentId && this.props.documentId);
     // reinit the component on certain props change
-    if (shouldReset){
+    if (shouldReset) {
       this.FormComponent = this.getComponent(nextProps);
     }
   }
   // return the current schema based on either the schema or collection prop
-  getSchema() {
-    return this.props.schema ? this.props.schema : this.props.collection.simpleSchema()._schema;
+  getSchema(props) {
+    return props.schema ? props.schema : props.collection.simpleSchema()._schema;
   }
 
   // if a document is being passed, this is an edit form
@@ -83,8 +85,9 @@ class FormWrapper extends PureComponent {
 
   // get fragment used to decide what data to load from the server to populate the form,
   // as well as what data to ask for as return value for the mutation
-  getFragments() {
-    const prefix = `${this.props.collectionName}${Utils.capitalize(this.getFormType())}`;
+  getFragments(props) {
+    const formType = this.getFormType(props);
+    const prefix = `${this.props.collectionName}${Utils.capitalize(this.getFormType(props))}`;
     const fragmentName = `${prefix}FormFragment`;
 
     const fields = props.fields;
@@ -93,7 +96,7 @@ class FormWrapper extends PureComponent {
     const updatetableFields = getUpdateableFields(this.getSchema(props));
 
     // get all editable/insertable fields (depending on current form type)
-    let queryFields = this.getFormType() === 'new' ? createableFields : updatetableFields;
+    let queryFields = this.getFormType(props) === 'new' ? createableFields : updatetableFields;
     // for the mutations's return value, also get non-editable but viewable fields (such as createdAt, userId, etc.)
     let mutationFields =
       formType === 'new'
@@ -182,17 +185,17 @@ class FormWrapper extends PureComponent {
   }
 
   getComponent(props) {
-    const formType = this.getFormType(props)
+    const formType = this.getFormType(props);
     let WrappedComponent;
 
-    const prefix = `${this.props.collectionName}${Utils.capitalize(this.getFormType())}`;
+    const prefix = `${this.props.collectionName}${Utils.capitalize(this.getFormType(props))}`;
 
-    const { queryFragment, mutationFragment, extraQueries } = this.getFragments();
+    const { queryFragment, mutationFragment, extraQueries } = this.getFragments(props);
 
     // props to pass on to child component (i.e. <Form />)
     const childProps = {
-      formType: this.getFormType(),
-      schema: this.getSchema(),
+      formType: this.getFormType(props),
+      schema: this.getSchema(props),
     };
 
     // options for withSingle HoC
