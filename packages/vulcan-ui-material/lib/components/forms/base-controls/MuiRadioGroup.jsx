@@ -17,14 +17,14 @@ const styles = theme => ({
   inline: {
     flexDirection: 'row',
     '& > label': {
-      marginRight: theme.spacing.unit * 5,
+      marginRight: theme.spacing(5),
     },
   },
   twoColumn: {
     display: 'block',
     [theme.breakpoints.down('md')]: {
       '& > label': {
-        marginRight: theme.spacing.unit * 5,
+        marginRight: theme.spacing(5),
       },
     },
     [theme.breakpoints.up('md')]: {
@@ -37,7 +37,7 @@ const styles = theme => ({
     display: 'block',
     [theme.breakpoints.down('xs')]: {
       '& > label': {
-        marginRight: theme.spacing.unit * 5,
+        marginRight: theme.spacing(5),
       },
     },
     [theme.breakpoints.up('xs')]: {
@@ -73,7 +73,7 @@ const MuiRadioGroup = createReactClass({
     }),
   },
 
-  getDefaultProps: function() {
+  getDefaultProps: function () {
     return {
       type: 'stacked',
       label: '',
@@ -82,20 +82,20 @@ const MuiRadioGroup = createReactClass({
     };
   },
 
-  changeRadio: function(event) {
+  changeRadio: function (event) {
     const value = event.target.value;
     //this.setValue(value);
     this.props.onChange(value);
   },
 
-  validate: function() {
+  validate: function () {
     if (this.props.onBlur) {
       this.props.onBlur();
     }
     return true;
   },
 
-  renderElement: function() {
+  renderElement: function () {
     const { options, value, name, disabled: _disabled } = this.props.inputProperties;
     const valueString = String(value);
     const controls = options.map((radio, key) => {
@@ -138,7 +138,7 @@ const MuiRadioGroup = createReactClass({
     );
   },
 
-  render: function() {
+  render: function () {
     if (this.props.layout === 'elementOnly') {
       return <div>{this.renderElement()}</div>;
     }
