@@ -51,6 +51,24 @@ const styles = theme => ({
       },
     },
   },
+  tenColumn: {
+    display: 'block',
+    [theme.breakpoints.down('xs')]: {
+      '& > label': {
+        marginRight: theme.spacing(1),
+      },
+    },
+    [theme.breakpoints.up('xs')]: {
+      '& > label': {
+        width: '24%',
+      },
+    },
+    [theme.breakpoints.up('md')]: {
+      '& > label': {
+        width: '9%',
+      },
+    },
+  },
   radio: {
     width: '32px',
     height: '32px',
@@ -73,7 +91,7 @@ const MuiRadioGroup = createReactClass({
     }),
   },
 
-  getDefaultProps: function () {
+  getDefaultProps: function() {
     return {
       type: 'stacked',
       label: '',
@@ -82,20 +100,20 @@ const MuiRadioGroup = createReactClass({
     };
   },
 
-  changeRadio: function (event) {
+  changeRadio: function(event) {
     const value = event.target.value;
     //this.setValue(value);
     this.props.onChange(value);
   },
 
-  validate: function () {
+  validate: function() {
     if (this.props.onBlur) {
       this.props.onBlur();
     }
     return true;
   },
 
-  renderElement: function () {
+  renderElement: function() {
     const { options, value, name, disabled: _disabled } = this.props.inputProperties;
     const valueString = String(value);
     const controls = options.map((radio, key) => {
@@ -124,7 +142,14 @@ const MuiRadioGroup = createReactClass({
       0
     );
 
-    let columnClass = maxLength < 18 ? 'threeColumn' : maxLength < 30 ? 'twoColumn' : '';
+    let columnClass =
+      maxLength == 2
+        ? 'tenColumn'
+        : maxLength < 18
+        ? 'threeColumn'
+        : maxLength < 30
+        ? 'twoColumn'
+        : '';
     if (this.props.type === 'inline') columnClass = 'inline';
     return (
       <RadioGroup
@@ -138,7 +163,7 @@ const MuiRadioGroup = createReactClass({
     );
   },
 
-  render: function () {
+  render: function() {
     if (this.props.layout === 'elementOnly') {
       return <div>{this.renderElement()}</div>;
     }
