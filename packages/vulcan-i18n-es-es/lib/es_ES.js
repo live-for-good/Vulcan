@@ -1,7 +1,6 @@
 import { addStrings } from 'meteor/vulcan:core';
 
 addStrings('es', {
-
   'accounts.error_incorrect_password': 'Contraseña Incorrecta',
   'accounts.error_email_required': 'Se requiere correo electrónico',
   'accounts.error_email_already_exists': 'El correo electrónico ya existe',
@@ -43,6 +42,7 @@ addStrings('es', {
   'forms.cancel': 'Cancelar',
   'forms.select_option': '-- seleccionar opción --',
   'forms.delete': 'Eliminar',
+  'forms.delete_field': 'Eliminar campo?',
   'forms.delete_confirm': '¿Eliminar documento?',
   'forms.revert': 'Revert', // TODO: translate
   'forms.confirm_discard': 'Discard changes?', // TODO: translate
@@ -86,8 +86,9 @@ addStrings('es', {
   'users.delete_confirm': '¿Eliminar este usuario?',
   'users.email_already_taken': 'Este correo electrónico ya está tomado: {value}',
 
-  'settings': 'Configuración',
-  'settings.json_message': 'Nota: la configuración ya provista en su archivo <code> settings.json </ code> estará deshabilitada.',
+  settings: 'Configuración',
+  'settings.json_message':
+    'Nota: la configuración ya provista en su archivo <code> settings.json </ code> estará deshabilitada.',
   'settings.edit': 'Editar configuración',
   'settings.edited': 'Configuración editada (recargue).',
   'settings.title': 'Título',
@@ -123,35 +124,39 @@ addStrings('es', {
   'app.powered_by': 'Construido con VulcanJS',
   'app.or': 'O',
   'app.noPermission': 'Lo siento, no tiene permiso para hacer esto en este momento.',
-  'app.operation_not_allowed': 'Lo sentimos, no tiene los derechos para realizar la operación “{value}”',
+  'app.operation_not_allowed':
+    'Lo sentimos, no tiene los derechos para realizar la operación “{value}”',
   'app.document_not_found': 'Documento no encontrado (id: {value})',
   'app.disallowed_property_detected': 'Propiedad no permitida detectada: {value}',
   'app.something_bad_happened': 'Algo malo pasó...',
-  'app.embedly_not_authorized': 'Clave API incrustada no válida incluida en el archivo de configuración. Para encontrar su clave, inicie sesión en https://app.embed.ly -> API',
+  'app.embedly_not_authorized':
+    'Clave API incrustada no válida incluida en el archivo de configuración. Para encontrar su clave, inicie sesión en https://app.embed.ly -> API',
 
   'cards.edit': 'Editar',
   'datatable.new': 'Nuevo',
   'datatable.edit': 'Editar',
 
-  'admin': 'Administrador',
-  'notifications': 'Notificaciones',
+  admin: 'Administrador',
+  notifications: 'Notificaciones',
 
-  'errors.expectedType': 'Se esperaba un campo “{label}” de tipo {dataType}, se ha recibido “{value}” en su lugar.',
+  'errors.expectedType':
+    'Se esperaba un campo “{label}” de tipo {dataType}, se ha recibido “{value}” en su lugar.',
   'errors.required': 'El campo “{label}” es obligatorio.',
   'errors.minString': 'El campo “{label}” debe tener al menos {max} caracteres.',
   'errors.maxString': 'El campo “{label}” está limitado a {max} caracteres.',
-  'errors.generic':'Ha ocurrido un error: <code>{errorMessage}</code>',
-  'errors.generic_report':'Algo ha ido mal: <code>{errorMessage}</code>. </br>Se ha reportado el error.',
-  'errors.minNumber':'El campo “{label}” debe ser superior a {min}.',
-  'errors.maxNumber':'El campo “{label}” debe ser inferior a {max}.',
-  'errors.minCount':'El campo “{label}” debe tener al menos {count}.',
-  'errors.maxCount':'El campo “{label}” está limitado a {count}.',
-  'errors.regEx':'El campo “{label}” está mal formateado.',
-  'errors.badDate':'El campo “{label}” debe ser una fecha.',
-  'errors.notAllowed':'El valor del campo “{label}” no està permitido.',
-  'errors.noDecimal':'El campo “{label}” no puede ser un decimal.',
+  'errors.generic': 'Ha ocurrido un error: <code>{errorMessage}</code>',
+  'errors.generic_report':
+    'Algo ha ido mal: <code>{errorMessage}</code>. </br>Se ha reportado el error.',
+  'errors.minNumber': 'El campo “{label}” debe ser superior a {min}.',
+  'errors.maxNumber': 'El campo “{label}” debe ser inferior a {max}.',
+  'errors.minCount': 'El campo “{label}” debe tener al menos {count}.',
+  'errors.maxCount': 'El campo “{label}” está limitado a {count}.',
+  'errors.regEx': 'El campo “{label}” está mal formateado.',
+  'errors.badDate': 'El campo “{label}” debe ser una fecha.',
+  'errors.notAllowed': 'El valor del campo “{label}” no està permitido.',
+  'errors.noDecimal': 'El campo “{label}” no puede ser un decimal.',
 
-  'errors.minNumberExclusive':'',
-  'errors.maxNumberExclusive':'',
-  'errors.keyNotInSchema':'',
+  'errors.minNumberExclusive': '',
+  'errors.maxNumberExclusive': '',
+  'errors.keyNotInSchema': '',
 });
