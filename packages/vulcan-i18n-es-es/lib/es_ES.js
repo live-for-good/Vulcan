@@ -47,6 +47,8 @@ addStrings('es', {
   'forms.delete_confirm': '¿Eliminar documento?',
   'forms.revert': 'Revert', // TODO: translate
   'forms.confirm_discard': 'Discard changes?', // TODO: translate
+  'forms.start_adornment_web_icon': 'Icono de esfera',
+  'forms.start_adornment_email_icon': 'icono de correo electrónico',
 
   'users.profile': 'Perfil',
   'users.complete_profile': 'Complete su perfil',
