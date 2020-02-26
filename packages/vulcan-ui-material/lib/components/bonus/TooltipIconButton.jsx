@@ -26,18 +26,7 @@ const TooltipIconButton = (props, { intl }) => {
     'WARNING! TooltipIconButton is deprecated in favor of TooltipButton as of vulcan:ui-material 1.13.0_1 and will be deleted in version 1.15.0'
   );
 
-  const {
-    title,
-    titleId,
-    placement,
-    icon,
-    className,
-    classes,
-    theme,
-    buttonRef,
-    variant,
-    ...properties
-  } = props;
+  const { title, titleId, placement, icon, className, classes, theme, buttonRef, variant, ...properties } = props;
 
   const titleText = props.title || intl.formatMessage({ id: titleId });
   const slug = Utils.slugify(titleId);
@@ -50,28 +39,15 @@ const TooltipIconButton = (props, { intl }) => {
       placement={placement}
       enterDelay={theme.utils.tooltipEnterDelay}>
       <div className={classes.buttonWrap}>
-        {
-          variant === 'fab'
-            ?
-
-            <Fab className={classNames(classes.button, slug)}
-              aria-label={titleText}
-              ref={buttonRef}
-              {...properties}
-            >
-              {icon}
-            </Fab>
-
-            :
-
-            <IconButton className={classNames(classes.button, slug)}
-              aria-label={titleText}
-              ref={buttonRef}
-              {...properties}
-            >
-              {icon}
-            </IconButton>
-        }
+        {variant === 'fab' ? (
+          <Fab className={classNames(classes.button, slug)} aria-label={titleText} ref={buttonRef} {...properties}>
+            {icon}
+          </Fab>
+        ) : (
+          <IconButton className={classNames(classes.button, slug)} aria-label={titleText} ref={buttonRef} {...properties}>
+            {icon}
+          </IconButton>
+        )}
       </div>
     </Tooltip>
   );

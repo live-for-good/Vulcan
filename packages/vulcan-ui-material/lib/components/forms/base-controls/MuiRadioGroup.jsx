@@ -22,6 +22,7 @@ const styles = theme => ({
   },
   twoColumn: {
     display: 'block',
+
     [theme.breakpoints.down('md')]: {
       '& > label': {
         marginRight: theme.spacing(5),
@@ -35,14 +36,16 @@ const styles = theme => ({
   },
   threeColumn: {
     display: 'block',
+
     [theme.breakpoints.down('xs')]: {
       '& > label': {
         marginRight: theme.spacing(5),
       },
     },
-    [theme.breakpoints.up('xs')]: {
+
+    [theme.breakpoints.up('sm')]: {
       '& > label': {
-        width: '49%',
+        width: '48%',
       },
     },
     [theme.breakpoints.up('md')]: {
@@ -51,8 +54,56 @@ const styles = theme => ({
       },
     },
   },
+  fiveColumn: {
+    display: 'block',
+    [theme.breakpoints.down('xs')]: {
+      '& > label': {
+        marginRight: theme.spacing(5),
+      },
+    },
+    [theme.breakpoints.up('xs')]: {
+      '& > label': {
+        width: '38%',
+      },
+    },
+    [theme.breakpoints.up('sm')]: {
+      '& > label': {
+        width: '32%',
+      },
+    },
+    [theme.breakpoints.up('md')]: {
+      '& > label': {
+        width: '19%',
+      },
+    },
+  },
+  eightColumn: {
+    display: 'block',
+
+    [theme.breakpoints.down('xs')]: {
+      '& > label': {
+        marginRight: theme.spacing(1),
+      },
+    },
+    [theme.breakpoints.up('xs')]: {
+      '& > label': {
+        width: '49%',
+      },
+    },
+    [theme.breakpoints.up('sm')]: {
+      '& > label': {
+        width: '32%',
+      },
+    },
+    [theme.breakpoints.up('md')]: {
+      '& > label': {
+        width: '12%',
+      },
+    },
+  },
   tenColumn: {
     display: 'block',
+
     [theme.breakpoints.down('xs')]: {
       '& > label': {
         marginRight: theme.spacing(1),
@@ -61,6 +112,11 @@ const styles = theme => ({
     [theme.breakpoints.up('xs')]: {
       '& > label': {
         width: '24%',
+      },
+    },
+    [theme.breakpoints.up('sm')]: {
+      '& > label': {
+        width: '14%',
       },
     },
     [theme.breakpoints.up('md')]: {
@@ -76,6 +132,9 @@ const styles = theme => ({
   },
   line: {
     marginBottom: '12px',
+  },
+  label: {
+    marginBottom: '0px',
   },
   inputDisabled: {},
 });
@@ -115,10 +174,10 @@ const MuiRadioGroup = createReactClass({
 
   renderElement: function() {
     const { options, value, name, disabled: _disabled } = this.props.inputProperties;
-    const valueString = String(value);
     const controls = options.map((radio, key) => {
-      let checked = valueString === radio.value;
+      let checked = value === radio.value;
       let disabled = radio.disabled || _disabled;
+
       return (
         <FormControlLabel
           key={key}
@@ -132,6 +191,7 @@ const MuiRadioGroup = createReactClass({
             />
           }
           className={this.props.classes.line}
+          classes={{ label: this.props.classes.label }}
           label={radio.label}
         />
       );
@@ -142,21 +202,35 @@ const MuiRadioGroup = createReactClass({
       0
     );
 
-    let columnClass =
-      maxLength == 2
-        ? 'tenColumn'
-        : maxLength < 18
-        ? 'threeColumn'
-        : maxLength < 30
-        ? 'twoColumn'
-        : '';
+
+    const getColumnClass = maxLength => {
+      if (maxLength < 3) {
+        return 'tenColumn';
+      }
+      if (maxLength < 7) {
+        return 'eightColumn';
+      }
+      if (maxLength < 12) {
+        return 'fiveColumn';
+      }
+      if (maxLength < 18) {
+        return 'threeColumn';
+      }
+      if (maxLength < 30) {
+        return 'twoColumn';
+      }
+    };
+
+    let columnClass = getColumnClass(maxLength);
+
     if (this.props.type === 'inline') columnClass = 'inline';
+
     return (
       <RadioGroup
         aria-label={name}
         name={name}
         className={classNames(this.props.classes.group, this.props.classes[columnClass])}
-        value={valueString}
+        value={value}
         onChange={this.changeRadio}>
         {controls}
       </RadioGroup>

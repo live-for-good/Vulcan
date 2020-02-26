@@ -4,7 +4,7 @@ import _omit from 'lodash/omit';
 
 
 export default {
-  
+
   propTypes: {
     label: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
     hideLabel: PropTypes.bool,
@@ -14,7 +14,7 @@ export default {
     className: PropTypes.string,
     inputType: PropTypes.string,
   },
-  
+
   getFormControlProperties: function () {
     return {
       label: this.props.label,
@@ -28,7 +28,7 @@ export default {
       required: this.props.required,
     };
   },
-  
+
   getFormHelperProperties: function () {
     return {
       help: this.props.help,
@@ -41,7 +41,7 @@ export default {
       className: 'form-helper-text',
     };
   },
-  
+
   hashString: function (string) {
     let hash = 0;
     for (let i = 0; i < string.length; i++) {
@@ -49,7 +49,7 @@ export default {
     }
     return hash;
   },
-  
+
   /**
    * The ID is used as an attribute on the form control, and is used to allow
    * associating the label element with the form control.
@@ -70,83 +70,86 @@ export default {
       this.hashString(JSON.stringify(label))
     ].join('-');
   },
-  
+
   hasErrors: function () {
     return !!(this.props.errors && this.props.errors.length);
   },
-  
+
   cleanProps: function (props) {
     const removedFields = [
-      'arrayField',
-      'arrayFieldSchema',
-      'beforeComponent',
-      'afterComponent',
+      'addItem',
       'addonAfter',
       'addonBefore',
-      'hideLink',
-      'help',
-      'label',
-      'hideLabel',
-      'options',
-      'layout',
-      'validatePristine',
-      'validateOnSubmit',
-      'inputClassName',
-      'optional',
-      'throwError',
-      'currentValues',
       'addToDeletedValues',
-      'deletedValues',
-      'clearFieldErrors',
-      'formType',
-      'inputType',
-      'showCharsRemaining',
+      'afterComponent',
+      'allowedValues',
+      'arrayField',
+      'arrayFieldSchema',
+      'autoValue',
+      'beforeComponent',
+      'blackbox',
       'charsCount',
       'charsRemaining',
-      'handleChange',
-      'document',
-      'updateCurrentValues',
       'classes',
-      'errors',
-      'description',
-      'clearField',
-      'regEx',
-      'allowedValues',
-      'mustComplete',
-      'renderComponent',
-      'formInput',
       'className',
-      'formatValue',
-      'scrubValue',
-      'custom',
-      'hideClear',
-      'inputProperties',
+      'clearField',
+      'clearFieldErrors',
       'currentUser',
-      'nestedSchema',
-      'parentFieldName',
-      'itemIndex',
+      'currentValues',
+      'custom',
+      'deletedValues',
+      'description',
+      'document',
+      'errors',
+      'formatValue',
       'formComponents',
-      'autoValue',
-      'minCount',
-      'maxCount',
-      'visibleItemIndex',
-      'prefilledProps',
-      'addItem',
-      'nestedArrayErrors',
+      'formInput',
+      'formType',
+      'handleChange',
       'hasErrors',
+      'help',
+      'hideClear',
+      'hideLabel',
+      'hideLink',
+      'inputClassName',
+      'inputProperties',
+      'inputType',
+      'itemDataType',
+      'itemIndex',
+      'itemProperties',
+      'label',
+      'layout',
+      'maxCount',
+      'minCount',
+      'mustComplete',
+      'nestedArrayErrors',
+      'nestedSchema',
+      'optional',
+      'options',
+      'parentFieldName',
+      'prefilledProps',
+      'regEx',
+      'renderComponent',
+      'scrubValue',
+      'showCharsRemaining',
+      'throwError',
+      'updateCurrentValues',
+      'validateOnSubmit',
+      'validatePristine',
+      'visibleItemIndex',
     ];
-    
+
     return _omit(props, removedFields);
   },
-  
+
   cleanSwitchProps: function (props) {
     const removedFields = [
       'value',
       'error',
       'label',
     ];
-  
+
     return _omit(props, removedFields);
   },
-  
+
 };

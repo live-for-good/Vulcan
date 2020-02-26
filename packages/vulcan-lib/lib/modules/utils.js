@@ -14,6 +14,9 @@ import { getCollection } from './collections.js';
 import set from 'lodash/set';
 import get from 'lodash/get';
 import isFunction from 'lodash/isFunction';
+import pluralize from 'pluralize';
+import { getFieldType } from './simpleSchema_utils';
+import { forEachDocumentField } from './schema_utils';
 
 registerSetting('debug', false, 'Enable debug mode (more verbose logging)');
 
@@ -284,7 +287,7 @@ Utils.sanitize = function (s) {
 };
 
 Utils.stripHTML = function (s) {
-  return s.replace(/<(?:.|\n)*?>/gm, '');
+  return s && s.replace(/<(?:.|\n)*?>/gm, '');
 };
 
 Utils.stripMarkdown = function (s) {
@@ -451,21 +454,23 @@ Utils.getComponentDisplayName = WrappedComponent => {
  */
 Utils.convertDates = (collection, listOrDocument) => {
   // if undefined, just return
-  if (!listOrDocument || !listOrDocument.length) return listOrDocument;
-
-  const list = Array.isArray(listOrDocument) ? listOrDocument : [listOrDocument];
+  if (!listOrDocument) return listOrDocument;
+  const isArray = listOrDocument && Array.isArray(listOrDocument);
+  if (isArray && !listOrDocument.length) return listOrDocument;
+  const list = isArray ? listOrDocument : [listOrDocument];
   const schema = collection.simpleSchema()._schema;
-  const dateFields = _.filter(_.keys(schema), fieldName => schema[fieldName].type === Date);
-  const convertedList = list.map(result => {
-    dateFields.forEach(fieldName => {
-      if (result[fieldName] && typeof result[fieldName] === 'string') {
-        result[fieldName] = new Date(result[fieldName]);
+  //Nested version
+  const convertedList = list.map((document) => {
+    forEachDocumentField(document, schema, ({ fieldName, fieldSchema, currentPath }) => {
+      if (fieldSchema && getFieldType(fieldSchema) === Date) {
+        const valuePath = `${currentPath}${fieldName}`;
+        const value = get(document, valuePath);
+        set(document, valuePath, new Date(value));
       }
     });
-    return result;
+    return document;
   });
-
-  return Array.isArray(listOrDocument) ? convertedList : convertedList[0];
+  return isArray ? convertedList : convertedList[0];
 };
 
 Utils.encodeIntlError = error => (typeof error !== 'object' ? error : JSON.stringify(error));
@@ -526,11 +531,9 @@ String.prototype.replaceAll = function (search, replacement) {
 
 Utils.isPromise = value => isFunction(get(value, 'then'));
 
-Utils.pluralize = s => {
-  const plural =
-    s.slice(-1) === 'y' ? `${s.slice(0, -1)}ies` : s.slice(-1) === 's' ? `${s}es` : `${s}s`;
-  return plural;
-};
+Utils.pluralize = pluralize;
+
+Utils.singularize = pluralize.singular;
 
 Utils.removeProperty = (obj, propertyName) => {
   for (const prop in obj) {

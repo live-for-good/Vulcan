@@ -42,12 +42,12 @@ addStrings('es', {
   'forms.cancel': 'Cancelar',
   'forms.select_option': '-- seleccionar opción --',
   'forms.add_nested_field': 'Agregar un {label}',
-  'forms.delete_nested_field': 'Eliminar este {label}?',
+  'forms.delete_nested_field': '¿Eliminar este {label}?',
   'forms.delete': 'Eliminar',
   'forms.delete_field': '¿Eliminar campo?',
   'forms.delete_confirm': '¿Eliminar documento?',
-  'forms.revert': 'Revert', // TODO: translate
-  'forms.confirm_discard': 'Discard changes?', // TODO: translate
+  'forms.revert': 'Revertir',
+  'forms.confirm_discard': '¿Descartar los cambios?',
   'forms.start_adornment_web_icon': 'Icono de internet',
   'forms.start_adornment_email_icon': 'Icono de correo electrónico',
 

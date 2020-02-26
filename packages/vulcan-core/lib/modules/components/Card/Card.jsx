@@ -4,7 +4,15 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import without from 'lodash/without';
+import withComponents from '../../containers/withComponents.js';
+import Users from 'meteor/vulcan:users';
+import get from 'lodash/get';
 
+/*
+
+Helpers
+
+*/
 const getLabel = (field, fieldName, collection, intl) => {
   const schema = collection && collection.simpleSchema()._schema;
   return formatLabel({
@@ -14,6 +22,8 @@ const getLabel = (field, fieldName, collection, intl) => {
     schema: schema,
   });
 };
+
+// Main component
 
 const CardItem = ({ label, value, typeName, Components, fieldName, collection }) => (
   <tr>
@@ -62,36 +72,42 @@ const CardEditForm = ({ collection, document, closeModal, ...editFormProps }) =>
   />
 );
 
-const Card = (
-  {
-    title,
-    className,
-    collection,
-    document,
-    currentUser,
-    fields,
-    showEdit = true,
-    Components,
-    ...editFormProps
-  },
-  { intl }
-) => {
+const Card = ({ title, className, collection, document, currentUser, fields, showEdit = true, Components, ...editFormProps }, { intl }) => {
   const fieldNames = fields ? fields : without(Object.keys(document), '__typename');
-  const canEdit =
-    showEdit &&
-    currentUser &&
-    collection &&
-    collection.options.mutations.update.check(currentUser, document);
+
+  let canUpdate = false;
+
+  // new APIs
+  const permissionCheck = get(collection, 'options.permissions.canUpdate');
+  // openCRUD backwards compatibility
+  const check = get(collection, 'options.mutations.edit.check') || get(collection, 'options.mutations.update.check');
+
+  if (Users.isAdmin(currentUser)) {
+    canUpdate = true;
+  } else if (permissionCheck) {
+    canUpdate = Users.permissionCheck({
+      check: permissionCheck,
+      user: currentUser,
+      context: { Users },
+      operationName: 'update',
+    });
+  } else if (check) {
+    canUpdate = check && check(currentUser, document, { Users });
+  }
+
+  const typeName = collection && collection.typeName.toLowerCase();
+  const semantizedClassName = classNames(
+    className,
+    'datacard',
+    typeName && `datacard-${typeName}`,
+    document && document._id && `datacard-${document._id}`);
 
   return (
-    <div
-      className={classNames(className, 'datacard', collection && `datacard-${collection._name}`)}>
+    <div className={semantizedClassName}>
       {title && <div className="datacard-title">{title}</div>}
       <table className="table table-bordered" style={{ maxWidth: '100%' }}>
         <tbody>
-          {canEdit ? (
-            <CardEdit collection={collection} document={document} {...editFormProps} />
-          ) : null}
+          {showEdit && canUpdate ? <CardEdit collection={collection} document={document} {...editFormProps} /> : null}
           {fieldNames.map((fieldName, index) => (
             <CardItem
               key={index}
@@ -100,6 +116,7 @@ const Card = (
               collection={collection}
               label={getLabel(document[fieldName], fieldName, collection, intl)}
               Components={Components}
+              document={document}
             />
           ))}
         </tbody>
@@ -124,6 +141,8 @@ Card.contextTypes = {
   intl: intlShape,
 };
 
-registerComponent('Card', Card);
-
-export default Card;
+registerComponent({
+  name: 'Card',
+  component: Card,
+  hocs: [withComponents],
+});

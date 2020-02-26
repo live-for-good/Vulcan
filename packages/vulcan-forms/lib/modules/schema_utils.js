@@ -3,8 +3,8 @@
  */
 import { Utils } from 'meteor/vulcan:core';
 import Users from 'meteor/vulcan:users';
-import _filter from 'lodash/filter';
 import _keys from 'lodash/keys';
+import _filter from 'lodash/filter';
 
 /* getters */
 // filter out fields with "." or "$"
@@ -17,15 +17,10 @@ export const getReadableFields = schema => {
   return getValidFields(schema).filter(fieldName => schema[fieldName].canRead || schema[fieldName].viewableBy);
 };
 
-export const getCreateableFields = schema => {
-  // OpenCRUD backwards compatibility
-  return getValidFields(schema).filter(fieldName => schema[fieldName].canCreate || schema[fieldName].insertableBy);
-};
+/*
 
-export const getUpdateableFields = schema => {
-  // OpenCRUD backwards compatibility
-  return getValidFields(schema).filter(fieldName => schema[fieldName].canUpdate || schema[fieldName].editableBy);
-};
+Convert a nested SimpleSchema schema into a JSON object
+If flatten = true, will create a flat object instead of nested tree
 
 /* permissions */
 
@@ -55,19 +50,16 @@ export const getEditableFields = function(schema, user, document) {
   return fields;
 };
 
-/*
+export const convertSchema = (schema, options = {}) => {
+  
+  const { flatten = false, removeArrays = true } = options;
 
-Convert a nested SimpleSchema schema into a JSON object
-If flatten = true, will create a flat object instead of nested tree
-
-*/
-export const convertSchema = (schema, flatten = false) => {
   if (schema._schema) {
     let jsonSchema = {};
 
     Object.keys(schema._schema).forEach(fieldName => {
       // exclude array fields
-      if (fieldName.includes('$')) {
+      if (removeArrays && fieldName.includes('$')) {
         return;
       }
 
@@ -82,12 +74,12 @@ export const convertSchema = (schema, flatten = false) => {
         jsonSchema[fieldName].arrayFieldSchema = getFieldSchema(`${fieldName}.$`, schema);
 
         // call convertSchema recursively on the subSchema
-        const convertedSubSchema = convertSchema(subSchemaOrType);
+        const convertedSubSchema = convertSchema(subSchemaOrType, options);
         // nested schema can be a field schema ({type, canRead, etc.}) (convertedSchema will be null)
         // or a schema on its own with subfields (convertedSchema will return smth)
         if (!convertedSubSchema) {
           // subSchema is a simple field in this case (eg array of numbers)
-          jsonSchema[fieldName].isSimpleArrayField = true;//getFieldSchema(`${fieldName}.$`, schema);
+          jsonSchema[fieldName].isSimpleArrayField = true; //getFieldSchema(`${fieldName}.$`, schema);
         } else {
           // subSchema is a full schema with multiple fields (eg array of objects)
           if (flatten) {
@@ -181,6 +173,7 @@ export const schemaProperties = [
   'mustComplete', // mustComplete: true means the field is required to have a complete profile
   'form', // form placeholder
   'inputProperties', // form placeholder
+  'itemProperties',
   'control', // SmartForm control (String or React component)
   'input', // SmartForm control (String or React component)
   'autoform', // legacy form placeholder; backward compatibility (not used anymore)
@@ -207,7 +200,7 @@ export const schemaProperties = [
   'options',
   'query',
   'fieldProperties',
-  'intl'
+  'intl',
 ];
 
 export const formProperties = [
@@ -229,6 +222,7 @@ export const formProperties = [
   'mustComplete', // mustComplete: true means the field is required to have a complete profile
   'form', // form placeholder
   'inputProperties', // form placeholder
+  'itemProperties',
   'control', // SmartForm control (String or React component)
   'input', // SmartForm control (String or React component)
   'order', // position in the form
@@ -239,5 +233,5 @@ export const formProperties = [
   'placeholder',
   'options',
   'query',
-  'fieldProperties'
+  'fieldProperties',
 ];
