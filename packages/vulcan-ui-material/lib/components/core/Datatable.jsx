@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import {
   Components,
-  replaceComponent,
+  // replaceComponent,
   withCurrentUser,
   Utils,
   withMulti
@@ -238,7 +238,7 @@ Datatable.defaultProps = {
   paginate: false,
 };
 
-replaceComponent('Datatable', Datatable, withCurrentUser, [withStyles, baseStyles]);
+// replaceComponent('Datatable', Datatable, withCurrentUser, [withStyles, baseStyles]);
 
 const DatatableTitle = ({ title }) => (
   <Toolbar>
@@ -247,10 +247,10 @@ const DatatableTitle = ({ title }) => (
     </Typography>
   </Toolbar>
 );
-replaceComponent('DatatableTitle', DatatableTitle);
+// replaceComponent('DatatableTitle', DatatableTitle);
 
 const DatatableContentsInnerLayout = Table;
-replaceComponent('DatatableContentsInnerLayout', DatatableContentsInnerLayout);
+// replaceComponent('DatatableContentsInnerLayout', DatatableContentsInnerLayout);
 /*
 
 DatatableContents Component
@@ -445,7 +445,7 @@ const DatatableContents = ({
   );
 };
 
-replaceComponent('DatatableContents', DatatableContents, [withStyles, datatableContentsStyles]);
+// replaceComponent('DatatableContents', DatatableContents, [withStyles, datatableContentsStyles]);
 
 /*
 
@@ -518,7 +518,7 @@ DatatableHeader.contextTypes = {
   intl: intlShape,
 };
 
-replaceComponent('DatatableHeader', DatatableHeader);
+// replaceComponent('DatatableHeader', DatatableHeader);
 
 /*
 
@@ -541,7 +541,7 @@ const DatatableSorter = ({ name, label, toggleSort, currentSort, sortable }) => 
   </TableCell>
 );
 
-replaceComponent('DatatableSorter', DatatableSorter);
+// replaceComponent('DatatableSorter', DatatableSorter);
 
 /*
 
@@ -619,7 +619,7 @@ const DatatableRow = (
   );
 };
 
-replaceComponent('DatatableRow', DatatableRow, [withStyles, datatableRowStyles]);
+// replaceComponent('DatatableRow', DatatableRow, [withStyles, datatableRowStyles]);
 
 DatatableRow.contextTypes = {
   intl: intlShape,
@@ -651,7 +651,7 @@ const DatatableCell = ({ column, document, currentUser, classes }) => {
   );
 };
 
-replaceComponent('DatatableCell', DatatableCell);
+// replaceComponent('DatatableCell', DatatableCell);
 
 /*
 
@@ -666,4 +666,4 @@ const DatatableDefaultCell = ({ column, document }) => (
   </div>
 );
 
-replaceComponent('DatatableDefaultCell', DatatableDefaultCell);
+// replaceComponent('DatatableDefaultCell', DatatableDefaultCell);
