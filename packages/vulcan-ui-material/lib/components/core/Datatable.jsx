@@ -667,3 +667,20 @@ const DatatableDefaultCell = ({ column, document }) => (
 );
 
 // replaceComponent('DatatableDefaultCell', DatatableDefaultCell);
+
+const checkboxOperator = '_in';
+const DatatableFilterCheckboxes = ({
+  options,
+  filters = { [checkboxOperator]: [] },
+  setFilters,
+}) => (
+  <Components.FormComponentCheckboxGroup
+    layout= 'inputOnly'
+    inputProperties={{ options, value: filters[checkboxOperator] }}
+    onChange={(newValues) => {
+      setFilters({ [checkboxOperator]: newValues });
+    }}
+  />
+);
+
+replaceComponent('DatatableFilterCheckboxes', DatatableFilterCheckboxes);
