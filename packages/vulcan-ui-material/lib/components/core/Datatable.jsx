@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import {
   Components,
-  // replaceComponent,
+  replaceComponent,
   withCurrentUser,
   Utils,
   withMulti
