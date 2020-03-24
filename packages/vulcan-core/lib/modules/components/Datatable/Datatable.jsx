@@ -202,23 +202,6 @@ class Datatable extends PureComponent {
       currentSelection = _union(currentSelection, elementsArray);
     }
     this.setState({ currentSelection });
-    // if (replace) {
-    //   this.setState({ currentSelection: element });
-    // } else {
-    //   let currentSelection = [...this.state.currentSelection];
-    //   if (element == 'all') {
-    //     if (this.state.currentSelection.includes('all')) {
-    //       currentSelection = [];
-    //     } else {
-    //       currentSelection = [element];
-    //     }
-    //   } else if (this.state.currentSelection.includes(element)) {
-    //     _remove(currentSelection, o => o == element);
-    //   } else {
-    //     currentSelection.push(element);
-    //   }
-    //   this.setState({ currentSelection });
-    // }
   };
 
   render() {

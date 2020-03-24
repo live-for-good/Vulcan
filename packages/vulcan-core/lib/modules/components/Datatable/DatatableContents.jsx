@@ -124,16 +124,6 @@ const DatatableContents = props => {
           ) : null}
         </Components.DatatableContentsHeadLayout>
         <Components.DatatableContentsBodyLayout>
-          {/* {showSelect && currentSelection.length ? (
-            <Components.DatatableSelections
-              currentSelection={currentSelection}
-              toggleSelection={toggleSelection}
-              totalCount={totalCount}
-              Components={Components}
-              showExport={showExport}
-              collection={collection}
-            />
-          ) : null} */}
           {results && results.length ? (
             results.map((document, index) => (
               <Components.DatatableRow
@@ -237,45 +227,3 @@ const DatatableEmpty = () => (
 );
 
 registerComponent('DatatableEmpty', DatatableEmpty);
-/*
-
-DatatableSelections Component
-
-*/
-// const DatatableSelections = props => {
-//   const { totalCount, currentSelection, toggleSelection, Components, showExport,collection } = props;
-//   const individualElementsSelected = currentSelection.filter(o => !['all'].includes(o)).length;
-//   let selectedElements = 0;
-//   if (currentSelection.includes('all')) selectedElements = totalCount - individualElementsSelected;
-//   else selectedElements = individualElementsSelected;
-
-//   return (
-//     <td colSpan="99">
-//       <div style={{ textAlign: 'center', padding: 10 }}>
-//         {selectedElements} éléments sélectionnés
-//         {!currentSelection.includes('all') ? (
-//           <Components.Button
-//             onClick={() => {
-//               toggleSelection('all');
-//             }}>
-//             Sélectionner tous ({totalCount})
-//           </Components.Button>
-//         ) : null}
-//        {showExport && (
-//         <Components.CSVExportButton
-//           collection={collection}
-//           options={{ limit:10000 }}
-//           // input={input}
-// $        />
-//       )}
-       
-//       </div>
-//     </td>
-//   );
-// };
-
-// DatatableSelections.propTypes = {
-//   Components: PropTypes.object.isRequired,
-// };
-
-// registerComponent('DatatableSelections', DatatableSelections);
