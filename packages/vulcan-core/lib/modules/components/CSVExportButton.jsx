@@ -1,10 +1,3 @@
-/**
- * @Author: Apollinaire Lecocq <apollinaire>
- * @Date:   24-01-19
- * @Last modified by:   apollinaire
- * @Last modified time: 19-02-19
- */
-
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
@@ -97,9 +90,11 @@ const CSVExport = props => {
       </Components.Button>
     );
   } else if (!results || !results.length) {
-    <Components.Button>
-      <FormattedMessage id="exportbutton.noResults" />
-    </Components.Button>;
+    return (
+      <Components.Button>
+        <FormattedMessage id="exportbutton.noResults" />
+      </Components.Button>
+    );
   }
   // merge all flattened reduces and take their keys
   // those keys will be the csv headers
