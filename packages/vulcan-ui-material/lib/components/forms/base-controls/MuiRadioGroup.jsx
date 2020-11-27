@@ -239,9 +239,10 @@ const MuiRadioGroup = createReactClass({
     const {options, name, disabled: _disabled} = this.props.inputProperties;
     const {itemProperties, updateCurrentValues, path} = this.props;
     let value = this.props.inputProperties.value;
+    const valueString = String(value);
     if (_isArray(value)) value = value[0];
     const controls = options.map((radio, key) => {
-      let checked = value === radio.value;
+      let checked = valueString === radio.value;
       let disabled = radio.disabled || _disabled;
 
       return (
