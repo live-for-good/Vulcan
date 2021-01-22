@@ -12,6 +12,7 @@ import MenuList from '@material-ui/core/MenuList';
 import ListSubheader from '@material-ui/core/ListSubheader';
 import StartAdornment, { hideStartAdornment } from './StartAdornment';
 import EndAdornment from './EndAdornment';
+import _debounce from 'lodash/debounce';
 import _isArray from 'lodash/isArray';
 import classNames from 'classnames';
 import { styles } from './MuiSuggest';
@@ -39,8 +40,25 @@ const MuiSelect = createReactClass({
   },
 
   getInitialState: function () {
+    // this.handleChangeDebounced = _debounce((value) => {
+    //   if (!this.props.handleChange) return;
+    //     if (value !== this.props.value) {
+    //       this.props.handleChange(value);
+    //     }
+    //   }, 500);
+  
+      if (this.props.refFunction) {
+        this.props.refFunction(this);
+      }
+
+      let value = this.props.value;
+      if (!this.props.multiple && _isArray(value)) {
+        value = value.length ? value[0] : '';
+      }
+ 
     return {
       isOpen: false,
+      value
     };
   },
 
@@ -76,7 +94,20 @@ const MuiSelect = createReactClass({
   },
 
   changeValue: function (value) {
+    this.setState({ value });
+
     this.props.handleChange(value);
+  },
+
+  componentDidUpdate(prevProps, prevState) {
+    let value = this.props.value;
+    if (!this.props.multiple && _isArray(value)) {
+      value = value.length ? value[0] : '';
+    }
+
+    if (value !== prevProps.value) {
+      this.setState({ value });
+    }
   },
 
   render: function () {
@@ -155,10 +186,7 @@ const MuiSelect = createReactClass({
       });
     }
 
-    let value = this.props.value;
-    if (!this.props.multiple && _isArray(value)) {
-      value = value.length ? value[0] : '';
-    }
+    let value = this.state.value || '';
 
     const startAdornment = hideStartAdornment(this.props) ? null :
       <StartAdornment {...this.props}
